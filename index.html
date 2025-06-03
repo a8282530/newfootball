@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="./stream/logo.ico">
+    <link rel="stylesheet" href="./css/index.css">
+    <script src="./js/mqtt.min.js"></script>
+    <script src="./js/po.js"></script>
+    <script src="./js/epmv.js"></script>
+    <script defer src="./js/alpine.js"></script>
+    <script src="./js/toats.js"></script>
+    <script src="./js/index.js"></script>
+    <title>⚾️ 足球AI预测系统 ⚾️</title>
+</head>
+
+<body>
+    <div class="app" x-data="app">
+        <div class="head"> <!-- 头部 --  x-bind:hidden="!expiry_time" -->
+            <h1 x-text="'龙头AI预测系统 ⚾️ ' + objmsgList[msgindex].name" onmousedown="window.aardio && aardio.hitCaption()">
+            </h1>
+            <div class="menu" x-bind:hidden="!expiry_time">
+                <h1>≡</h1>
+                <div class="item" @click="selectedtypes($event)">
+                    <p title="top" x-text="objmsgList['1'].name"></p>
+                    <p title="bottom" x-text="objmsgList['2'].name"></p>
+                    <p title="full" x-text="objmsgList['3'].name"></p>
+                    <p title="huangguan" x-text="objmsgList['4'].name"></p>
+                    <p title="init" x-text="objmsgList['5'].name"></p>
+                    <p title="history" x-text="objmsgList['6'].name"></p>
+                    <p title="logout">退出</p>
+                </div>
+            </div>
+
+            <!-- 历史数据场次统计 -->
+            <div class="history-stat contol" x-bind:hidden="!countstat.count || countstat.count < 1 || !expiry_time">
+                <h1>
+                    <span x-text="'共' + countstat.count + '场' "></span>
+                    <span x-text="'输' + countstat.lose + '场' "></span>
+                    <span x-text="'平' + countstat.draw + '场' "></span>
+                    <span x-text="'胜' + countstat.win + '场' "></span>
+                    <span x-text="'胜率' + countstat.winrate"></span>
+                </h1>
+            </div>
+
+            <!-- 消息提示设置 -->
+            <div class="msg-setings contol" @click="setings($event)" title="消息提示设置" x-bind:hidden="!expiry_time">
+                <h1><span>⚙️</span></h1>
+            </div>
+
+            <!-- 退出程序 -->
+            <div class="sys-exit contol" @click="systemexit($event)" title="退出程序" x-bind:hidden="!window.aardio">
+                <h1><span>⏏️</span></h1>
+            </div>
+
+            <!-- 未读消息列表 -->
+            <div class="readmsg" @click="showMsgList($event)" x-bind:hidden="unreadmsgList.length < 1 || !expiry_time">
+                <h1>
+                    <span x-text="unreadmsgList.length"></span>
+                    <span>🔔</span>
+                </h1>
+            </div>
+
+        </div>
+        <div class="body">
+            <div class="table" x-bind:hidden="!expiry_time">
+                <table>
+                    <thead x-bind:hidden="msgindex === '6'">
+                        <tr>
+                            <th>开赛时间</th>
+                            <th>提示时间</th>
+                            <th>联赛</th>
+                            <th>状态</th>
+                            <th x-bind:hidden="parseInt(msgindex) > 2">提示比分</th>
+                            <th>主队</th>
+                            <th>比分</th>
+                            <th>客队</th>
+                            <th x-text="parseInt(msgindex) > 2 ? '水位' : parseInt(msgindex) === 1 ? '半场比分': '角球比分'">半场比分
+                            </th>
+                            <th x-bind:hidden="parseInt(msgindex) > 2">红牌时间</th>
+                            <!-- <th x-bind:hidden="parseInt(msgindex) > 2">盘口</th>
+                            <th x-bind:hidden="parseInt(msgindex) > 2">水位</th> -->
+                            <th x-bind:hidden="parseInt(msgindex) > 2">射失时间</th>
+                            <th>推荐</th>
+                            <th>是否命中</th>
+                            <th>推送时间</th>
+                        </tr>
+                    </thead>
+                    <tbody x-bind:hidden="msgindex !== '1'">
+                        <template x-for="msg,index in objmsgList['1'].data">
+                            <tr class="row" x-bind:style="{ color: '❌ ⌛️'.includes(msg.hit) ? '#1aa282' : '#f00' }">
+                                <td x-text="msg.starttime"></td>
+                                <td x-text="msg.prompttime"></td>
+                                <td x-text="msg.league"></td>
+                                <td x-text="msg.status"></td>
+                                <td x-text="msg.homescore"></td>
+                                <td x-text="msg.hometeam"></td>
+                                <td x-text="msg.score"></td>
+                                <td x-text="msg.awayteam"></td>
+                                <td x-text="msg.hscore"></td>
+                                <td x-text="msg.htime"></td>
+                                <!-- <td x-text="msg.pan"></td>
+                                <td x-text="msg.odds"></td> -->
+                                <td x-text="msg.rtime"></td>
+                                <td x-text="msg.rec"></td>
+                                <td x-text="msg.hit"></td>
+                                <td x-text="msg.overtime"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+
+                    <tbody x-bind:hidden="msgindex !== '2'">
+                        <template x-for="msg,index in objmsgList['2'].data">
+                            <tr class="row" x-bind:style="{ color: '❌ ⌛️'.includes(msg.hit) ? '#1aa282' : '#f00' }">
+                                <td x-text="msg.starttime"></td>
+                                <td x-text="msg.prompttime"></td>
+                                <td x-text="msg.league"></td>
+                                <td x-text="msg.status"></td>
+                                <td x-text="msg.homescore"></td>
+                                <td x-text="msg.hometeam"></td>
+                                <td x-text="msg.score"></td>
+                                <td x-text="msg.awayteam"></td>
+                                <td x-text="msg.hscore"></td>
+                                <td x-text="msg.htime"></td>
+                                <!-- <td x-text="msg.pan"></td>
+                                <td x-text="msg.odds"></td> -->
+                                <td x-text="msg.rtime"></td>
+                                <td x-text="msg.rec"></td>
+                                <td x-text="msg.hit"></td>
+                                <td x-text="msg.overtime"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+
+                    <tbody x-bind:hidden="msgindex !== '3'">
+                        <template x-for="msg,index in objmsgList['3'].data">
+                            <tr class="row" x-bind:style="{ color: '❌ ⌛️'.includes(msg.hit) ? '#1aa282' : '#f00' }">
+                                <td x-text="msg.starttime"></td>
+                                <td x-text="msg.prompttime"></td>
+                                <td x-text="msg.league"></td>
+                                <td x-text="msg.status"></td>
+                                <td x-text="msg.hometeam"></td>
+                                <td x-text="msg.score"></td>
+                                <td x-text="msg.awayteam"></td>
+                                <td x-text="msg.pan"></td>
+                                <td x-text="msg.rec"></td>
+                                <td x-text="msg.hit"></td>
+                                <td x-text="msg.overtime"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                    <tbody x-bind:hidden="msgindex !== '4'">
+                        <template x-for="msg,index in objmsgList['4'].data">
+                            <tr class="row" x-bind:style="{ color: '❌ ⌛️'.includes(msg.hit) ? '#1aa282' : '#f00' }">
+                                <td x-text="msg.starttime"></td>
+                                <td x-text="msg.prompttime"></td>
+                                <td x-text="msg.league"></td>
+                                <td x-text="msg.status"></td>
+                                <td x-text="msg.hometeam"></td>
+                                <td x-text="msg.score"></td>
+                                <td x-text="msg.awayteam"></td>
+                                <td x-text="msg.pan"></td>
+                                <td x-text="msg.rec"></td>
+                                <td x-text="msg.hit"></td>
+                                <td x-text="msg.overtime"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                    <tbody x-bind:hidden="msgindex !== '5'">
+                        <template x-for="msg,index in objmsgList['5'].data">
+                            <tr class="row" x-bind:style="{ color: '❌ ⌛️'.includes(msg.hit) ? '#1aa282' : '#f00' }">
+                                <td x-text="msg.starttime"></td>
+                                <td x-text="msg.prompttime"></td>
+                                <td x-text="msg.league"></td>
+                                <td x-text="msg.status"></td>
+                                <td x-text="msg.hometeam"></td>
+                                <td x-text="msg.score"></td>
+                                <td x-text="msg.awayteam"></td>
+                                <td x-text="msg.pan"></td>
+                                <td x-text="msg.rec"></td>
+                                <td x-text="msg.hit"></td>
+                                <td x-text="msg.overtime"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+
+
+                </table>
+                <table class="history-table" x-bind:hidden="msgindex !== '6'">
+                    <thead>
+                        <tr>
+                            <th>开赛时间</th>
+                            <th>提示时间</th>
+                            <th>联赛</th>
+                            <th>状态</th>
+                            <th>主队</th>
+                            <th>比分</th>
+                            <th>客队</th>
+                            <th>水位</th>
+                            <th>推荐</th>
+                            <th>是否命中</th>
+                            <th>完场时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="msg,index in historyobj[historyType]?.data[pageIndex-1]">
+                            <tr class="row" x-bind:style="{ color: '❌ ⌛️'.includes(msg.hit) ? '#1aa282' : '#f00' }">
+                                <td x-text="msg.starttime"></td>
+                                <td x-text="msg.prompttime"></td>
+                                <td x-text="msg.league"></td>
+                                <td x-text="msg.status"></td>
+                                <td x-text="msg.hometeam"></td>
+                                <td x-text="msg.score"></td>
+                                <td x-text="msg.awayteam"></td>
+                                <td x-text="msg.pan"></td>
+                                <td x-text="msg.rec"></td>
+                                <td x-text="msg.hit"></td>
+                                <td x-text="msg.overtime"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                    <!-- 历史记录 分页 -->
+                    <tfoot x-bind:hidden="isshowToast">
+                        <tr>
+                            <td colspan="12">
+                                <div class="pagination">
+                                    <button class="prev" @click="pageIndex > 1 && pageIndex--"
+                                        x-bind:style="{cursor: pageIndex === 1 ? 'not-allowed' : 'pointer'}">
+                                        前一天
+                                    </button>
+                                    <select name="page" @change="pageIndex = $event.target.value" x-model="pageIndex">
+                                        <template x-for="i in historyobj[historyType]?.data.length">
+                                            <option :value="i" x-text="i"></option>
+                                        </template>
+                                    </select>
+                                    <select name="type" @change="historyType = $event.target.value,pageIndex = 1"
+                                        x-model="historyType">
+                                        <template x-for="i in Object.keys(historyobj)">
+                                            <option :value="i" x-text="historyobj[i].name"></option>
+                                        </template>
+                                    </select>
+                                    <button class="next"
+                                        @click="pageIndex < historyobj[historyType]?.data.length && pageIndex++"
+                                        x-bind:style="{cursor: pageIndex === historyobj[historyType]?.data.length ? 'not-allowed' : 'pointer'}">
+                                        后一天
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <!-- x-bind:style="'--animation-duration:' + calculateAnimationDuration() + 's'" -->
+        <div class='ad' x-bind:hidden="toastisShow" :style="{ 
+            display: toastisShow ? 'none' : 'flex', 
+            '--animation-duration': calculateAnimationDuration() + 's' 
+            }">
+            <i class="iconfont" x-bind:hidden="toastisShow">&#xe633;</i>
+            <p class='content'>
+                <span x-text="toastMsg"></span>
+            </p>
+        </div>
+
+        <div class="foot">
+            <h1>Copyright © 2025 Football. All rights reserved.</h1>
+            <h1 class="now-time" x-text="'系统时间：'+now_time"></h1>
+            <h1 class="user-login" x-bind:hidden="expiry_time === ''">
+                <span class="user-icon">⚾️</span>
+                <span>到期时间：</span>
+                <span x-text="expiry_time"></span>
+            </h1>
+            <audio src="./stream/message.mp3" style="display: none;" name="message"></audio>
+            <audio src="./stream/sort.mp3" style="display: none;" name="sort"></audio>
+            <audio src="./stream/delete.mp3" style="display: none;" name="delete"></audio>
+        </div>
+
+        <div class="progress" x-show.transition="isVisible">
+            <div class="loader" title="正在加载..."></div>
+        </div>
+    </div>
+</body>
+
+</html>
