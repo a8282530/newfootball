@@ -227,7 +227,7 @@
                                 <div class="pagination">
                                     <button class="prev" @click="pageIndex > 1 && pageIndex--"
                                         x-bind:style="{cursor: pageIndex === 1 ? 'not-allowed' : 'pointer'}">
-                                        前一天
+                                        后一天
                                     </button>
                                     <select name="page" @change="pageIndex = $event.target.value" x-model="pageIndex">
                                         <template x-for="i in historyobj[historyType]?.data.length">
@@ -243,7 +243,7 @@
                                     <button class="next"
                                         @click="pageIndex < historyobj[historyType]?.data.length && pageIndex++"
                                         x-bind:style="{cursor: pageIndex === historyobj[historyType]?.data.length ? 'not-allowed' : 'pointer'}">
-                                        后一天
+                                        前一天
                                     </button>
                                 </div>
                             </td>
