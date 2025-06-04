@@ -336,6 +336,15 @@ document.addEventListener('alpine:init', () => {
                             // 已经在其他登录登录
                             return this.logout('卡密已到期,或已在其他地方登录！');
                         }
+                        if (reasonCode === 141) {
+                            Toast.fire({
+                                position: 'top-end',
+                                icon: 'error',
+                                title: '连接断开，正在重连'
+                            });
+                            return this.client.reconnect();
+                        }
+                        
                         return this.logout(`未知错误 ${reasonCode}，请检查网络或联系客服`);
                     }
                 });
