@@ -16,7 +16,7 @@
 </head>
 
 <body>
-    <div class="app" x-data="app">
+    <div class="app" x-data="app" x-cloak>
         <div class="head"> <!-- 头部 --  x-bind:hidden="!expiry_time" -->
             <h1 x-text="'龙头AI预测系统 ⚾️ ' + objmsgList[msgindex].name" onmousedown="window.aardio && aardio.hitCaption()">
             </h1>
