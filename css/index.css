@@ -10,6 +10,8 @@ body {
     user-select: none;
 }
 
+[x-cloak] { display: none !important; }
+
 .head {
     height: 40px;
     background-color: #333;
