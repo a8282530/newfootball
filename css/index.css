@@ -3,7 +3,6 @@ body {
     margin: 0;
     padding: 0;
     font-family: "Microsoft YaHei", Arial, sans-serif;
-    overflow: hidden;
     height: 100%;
     background-color: #eee;
     overflow: hidden;
@@ -148,13 +147,11 @@ div.menu:hover .item {
     font-size: 18px;
 }
 
-
 .nav-link:hover {
     color: #e97489;
     text-decoration: underline;
     background-color: #bbb;
 }
-
 
 .swal2-actions {
     margin: 0 auto !important;
@@ -163,7 +160,7 @@ div.menu:hover .item {
 .history-stat {
     position: absolute;
     top: 0;
-    left: 100px;
+    left: 80px;
     color: #df6e11;
     padding: 0 20px;
     cursor: pointer;
@@ -313,33 +310,6 @@ div.menu:hover .item {
     }
 }
 
-.buttons {
-    position: absolute;
-    top: 0;
-    right: 10px;
-    padding: 0 10px;
-    z-index: 99999;
-    pointer-events: all;
-}
-
-.buttons button {
-    /* margin-left: 10px; */
-    color: #ddd;
-    font: 14px Marlett;
-    background-color: transparent;
-    border: none;
-    height: 38px;
-    width: 38px;
-    cursor: pointer;
-    border-radius: 2px;
-}
-
-.buttons button:hover {
-    background-color: #666;
-    border: 1px solid #666;
-    color: #f00;
-}
-
 .body {
     position: absolute;
     top: 40px;
@@ -352,13 +322,9 @@ div.menu:hover .item {
 
 .body table {
     border-collapse: collapse;
-    table-layout: fixed;
     /* 固定表格布局 */
-    margin: 0 auto;
-    min-width: none;
     text-align: center;
     width: 100%;
-    table-layout: auto;
 }
 
 .body thead {
@@ -501,6 +467,14 @@ td:hover {
 
 /* 公告滚屏结束 */
 
+tfoot{
+    opacity: 0.2;
+    transition: all 0.3s ease-in-out;
+}
+
+tfoot:hover{
+    opacity: 0.9;
+}
 
 tfoot .pagination {
     margin: 0 auto;
