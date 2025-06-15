@@ -76,7 +76,7 @@ document.addEventListener('alpine:init', () => {
     };
     window.playsound = async function (name) {
         const audio = document.querySelector(`audio[name="${name}"]`);
-        return audio && await audio.play(),true;
+        return audio && await audio.play(), true;
     };
 
     function formatTimestamp(timestamp, isFull = true) {
@@ -109,6 +109,7 @@ document.addEventListener('alpine:init', () => {
         const setings = JSON.parse(localsetings);
         const { value: formValues } = await Swal.fire({
             title: "消息提示设置",
+            confirmButtonText: '保存设置',
             html: `
                 <div class="setings-form">
                     <div>
@@ -208,7 +209,8 @@ document.addEventListener('alpine:init', () => {
                     return this.showtoast(content, timer);
                 };
                 if (type === '6') {
-                    this.historyurl = value;
+                    // this.historyurl = value;
+                    this.historyurl = `https://api.codetabs.com/v1/proxy?quest=${value}`
                     return this.history();
                 };
 
@@ -269,6 +271,7 @@ document.addEventListener('alpine:init', () => {
                 confirmButtonText: '确定退出'
             }).then(({ isConfirmed }) => {
                 if (!isConfirmed) {
+                    !this.expiry_time && !this.client && this.login();
                     return;
                 }
                 aardio.close();
@@ -344,7 +347,7 @@ document.addEventListener('alpine:init', () => {
                             });
                             return this.client.reconnect();
                         }
-                        
+
                         return this.logout(`未知错误 ${reasonCode}，请检查网络或联系客服`);
                     }
                 });
@@ -374,6 +377,7 @@ document.addEventListener('alpine:init', () => {
             } catch (error) {
                 console.log('disconnect error:', error)
             }
+            this.client = null;
             this.login(title);
         },
         async showMsgList() {
@@ -518,7 +522,7 @@ document.addEventListener('alpine:init', () => {
                 this.now_time = formatTimestamp(Date.now());
                 this.card && this.expiry_time < this.now_time && this.client && this.logout();
             }, 1000);
-            
+
 
         }
 
